@@ -4,6 +4,12 @@
 //
 
 export const toRna = (cord) => {
-
-  return cord;
+  let rna = '';
+  for(let nucleotide of cord){
+    if (nucleotide === 'G') rna += 'C';
+    if (nucleotide === 'C') rna += 'G';
+    if (nucleotide === 'T') rna += 'A';
+    if (nucleotide === 'A') rna += 'U';
+  }
+  return rna;
 };
