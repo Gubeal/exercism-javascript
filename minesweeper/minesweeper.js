@@ -1,8 +1,3 @@
-//
-// This is only a SKELETON file for the 'Minesweeper' exercise. It's been provided as a
-// convenience to get you started writing code faster.
-//
-
 export const annotate = (input) => {
   return resolveBoard(input);
 };
@@ -10,63 +5,46 @@ export const annotate = (input) => {
 const resolveBoard = (list) => {
   let board = changeStringsToArray(list);
 
-  for (let row = 0; row < board.length; row++){
-    for (let column = 0; column < board[0].length; column++) {
-      
-      const place = board[row][column];
+  const numRows = board.length;
+  const numCols = board[0] ? board[0].length : 0;
 
-      if (place === '*') {
-        //clue row
-        if (column - 1 >= 0) {
-          board[row][column - 1] = addClue(board[row][column - 1]);
-        }
-        if (column + 1 < board[0].length) {
-          board[row][column + 1] = addClue(board[row][column + 1]);
-        }
-        //clue previous row
-        if (row - 1 >= 0) {
-          board[row - 1][column] = addClue(board[row - 1][column]);
-          if (column - 1 >= 0) {
-            board[row - 1][column - 1] = addClue(board[row - 1][column - 1]);
-          }
-          if (column + 1 < board[0].length) {
-            board[row - 1][column + 1] = addClue(board[row - 1][column + 1]);
-          }
-        }
-        //clue next row
-        if (row + 1 < board.length) {
-          board[row + 1][column] = addClue(board[row + 1][column]);
-          if (column - 1 >= 0) {
-            board[row + 1][column - 1] = addClue(board[row + 1][column - 1]);
-          }
-          if (column + 1 < board[0].length) {
-            board[row + 1][column + 1] = addClue(board[row + 1][column + 1]);
-          }
-        }
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < numCols; col++) {
+      if (board[row][col] === '*') {
+        addCluesAroundMine(board, row, col, numRows, numCols);
       }
     }
   }
 
-  return changesArrayToStrings(board);
+  return changeArrayToStrings(board);
 }
 
-const addClue = (item) => {
-  return item === ' ' ? 1 : item === '*' ? item : item + 1;
+const addCluesAroundMine = (board, row, col, numRows, numCols) => {
+  for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+    for (let colOffset = -1; colOffset <= 1; colOffset++) {
+      const newRow = row + rowOffset;
+      const newCol = col + colOffset;
+      if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
+        addClue(board, newRow, newCol);
+      }
+    }
+  }
 }
+
+const addClue = (board, row, col) => {
+  if (board[row][col] !== '*') {
+    if (board[row][col] === ' ') {
+      board[row][col] = 1;
+    } else {
+      board[row][col]++;
+    }
+  }
+};
 
 const changeStringsToArray = (list) => {
-  let result = [];
-  list.forEach(element => {
-    const line = [...element];
-    result.push(line);
-  });
-  return result;
+  return list.map(line => [...line]);
 }
 
-const changesArrayToStrings = (board) => {
-  let result = [];
-  board.forEach(row => {
-    result.push(row.toString().replace(/,/g, ""));
-  });
-  return result;
+const changeArrayToStrings = (board) => {
+  return board.map(row => row.join(''));
 }
